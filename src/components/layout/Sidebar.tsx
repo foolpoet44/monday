@@ -1,72 +1,45 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Calendar, AlertCircle, Plus } from 'lucide-react';
-import { useAppContext } from '../../store/AppContext';
-import { ACTIONS } from '../../store/actions';
-import { ProjectItem } from '../project/ProjectItem';
-import { ProjectForm } from '../project/ProjectForm';
-import { isToday, parseISO } from 'date-fns';
+import React from 'react';
+import { Home, User, Plus, Search, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-export function Sidebar({ className = '' }: { className?: string }) {
-    const { state, dispatch } = useAppContext();
-    const [isAddingProject, setIsAddingProject] = useState(false);
-
-    const activeTasks = state.tasks.filter(t => t.status !== 'done');
-    const todayDueCount = activeTasks.filter(t => t.dueDate && isToday(parseISO(t.dueDate))).length;
-    const urgentCount = activeTasks.filter(t => t.priority === 'P1').length;
-
+export function Sidebar() {
     return (
-        <div className={`bg-bg-surface flex flex-col ${className}`}>
-            <div className="p-4 font-bold text-lg border-b border-border text-text-primary">PM Tasks</div>
-            <nav className="flex-1 overflow-y-auto p-4 space-y-6">
+        <div className="w-[240px] h-full bg-slate-50 border-r border-slate-200 flex flex-col text-slate-800">
+            {/* Workspace Header */}
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+                <div className="font-bold flex items-center gap-2">
+                    <div className="w-6 h-6 bg-blue-600 rounded text-white flex items-center justify-center font-bold text-xs">M</div>
+                    Main Workspace
+                </div>
+            </div>
+
+            {/* Tools */}
+            <div className="p-3 border-b border-slate-200 space-y-1">
+                <button className="w-full flex items-center gap-3 px-2 py-1.5 hover:bg-slate-200 rounded text-sm text-slate-600">
+                    <Home size={16} /> Home
+                </button>
+                <button className="w-full flex items-center gap-3 px-2 py-1.5 hover:bg-slate-200 rounded text-sm text-slate-600">
+                    <User size={16} /> My Work
+                </button>
+            </div>
+
+            {/* Boards Section */}
+            <div className="flex-1 overflow-y-auto p-3">
+                <div className="flex items-center justify-between px-2 mb-2 group">
+                    <span className="text-xs font-semibold text-slate-500 uppercase">Boards</span>
+                    <button className="text-slate-400 hover:text-slate-700 opacity-0 group-hover:opacity-100"><Plus size={14} /></button>
+                </div>
+
                 <div className="space-y-1">
-                    <NavLink
-                        to="/"
-                        onClick={() => dispatch({ type: ACTIONS.SET_FILTER, payload: { type: 'all' } })}
-                        className={({ isActive }) => `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${isActive && state.activeFilter.type === 'all' ? 'bg-accent/10 text-accent' : 'hover:bg-bg-elevated text-text-secondary w-full'}`}
-                    >
-                        <LayoutDashboard size={18} />
-                        <span className="flex-1 text-left text-sm font-medium">전체 보기</span>
-                        <span className="text-xs bg-bg-elevated px-2 py-0.5 rounded-full text-text-secondary">{activeTasks.length}</span>
-                    </NavLink>
-                    <NavLink
-                        to="/today"
-                        onClick={() => dispatch({ type: ACTIONS.SET_FILTER, payload: { type: 'today' } })}
-                        className={({ isActive }) => `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${isActive && state.activeFilter.type === 'today' ? 'bg-accent/10 text-accent' : 'hover:bg-bg-elevated text-text-secondary w-full'}`}
-                    >
-                        <Calendar size={18} />
-                        <span className="flex-1 text-left text-sm font-medium">오늘 마감</span>
-                        <span className="text-xs bg-bg-elevated px-2 py-0.5 rounded-full text-text-secondary">{todayDueCount}</span>
-                    </NavLink>
-                    <NavLink
-                        to="/urgent"
-                        onClick={() => dispatch({ type: ACTIONS.SET_FILTER, payload: { type: 'urgent' } })}
-                        className={({ isActive }) => `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${isActive && state.activeFilter.type === 'urgent' ? 'bg-accent/10 text-accent' : 'hover:bg-bg-elevated text-text-secondary w-full'}`}
-                    >
-                        <AlertCircle size={18} />
-                        <span className="flex-1 text-left text-sm font-medium">P1 긴급</span>
-                        <span className="text-xs bg-bg-elevated px-2 py-0.5 rounded-full text-text-secondary">{urgentCount}</span>
-                    </NavLink>
+                    {/* Mock Board Link */}
+                    <Link to="/board/b1" className="flex items-center gap-2 px-2 py-1.5 bg-blue-100 text-blue-700 rounded text-sm font-medium">
+                        <span className="w-4 h-4 text-xs">📊</span>개발 스프린트 백로그
+                    </Link>
+                    <button className="w-full flex items-center gap-2 px-2 py-1.5 hover:bg-slate-200 text-slate-600 rounded text-sm">
+                        <span className="w-4 h-4 text-xs">📋</span>마케팅 캠페인
+                    </button>
                 </div>
-
-                <div>
-                    <div className="text-xs font-semibold text-text-muted mb-2 px-3 uppercase tracking-wider">Projects</div>
-                    <div className="space-y-1">
-                        {state.projects.map(p => <ProjectItem key={p.id} project={p} />)}
-
-                        {!isAddingProject ? (
-                            <button
-                                onClick={() => setIsAddingProject(true)}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-bg-elevated rounded-md transition-colors mt-2"
-                            >
-                                <Plus size={16} /> 프로젝트 추가
-                            </button>
-                        ) : (
-                            <ProjectForm onClose={() => setIsAddingProject(false)} />
-                        )}
-                    </div>
-                </div>
-            </nav>
+            </div>
         </div>
     );
 }

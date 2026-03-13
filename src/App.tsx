@@ -1,24 +1,20 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AppProvider } from './store/AppContext';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
-import { TaskList } from './components/task/TaskList';
+import { BoardShell } from './components/board/BoardShell';
 
 function App() {
-  return (
-    <AppProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<AppLayout />}>
-            <Route index element={<TaskList />} />
-            <Route path="today" element={<TaskList />} />
-            <Route path="urgent" element={<TaskList />} />
-            <Route path="project/:projectId" element={<TaskList />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AppProvider>
-  );
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<AppLayout />}>
+                    {/* Default redirect to our mock board for prototype */}
+                    <Route index element={<Navigate to="board/b1" replace />} />
+                    <Route path="board/:boardId/*" element={<BoardShell />} />
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;

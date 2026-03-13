@@ -1,38 +1,41 @@
-export type Priority = 'P1' | 'P2' | 'P3';
+export type ColumnType = 'text' | 'status' | 'date' | 'number' | 'person';
 
-export type TaskStatus = 'todo' | 'in_progress' | 'blocked' | 'done';
+export interface ColumnDef {
+    id: string;
+    board_id: string;
+    title: string;
+    type: ColumnType;
+    settings: Record<string, any>;
+    order: number;
+}
 
-export interface Project {
+export interface Board {
+    id: string;
+    workspace_id: string;
+    name: string;
+    description: string | null;
+    created_at: string;
+}
+
+export interface Group {
+    id: string;
+    board_id: string;
+    title: string;
+    color: string;
+    order: number;
+}
+
+export interface Item {
+    id: string;
+    group_id: string;
+    name: string;
+    column_values: Record<string, any>;
+    order: number;
+    created_at: string;
+}
+
+export interface Workspace {
     id: string;
     name: string;
-    color: string;      // hex color e.g. '#4F6EF7'
-    createdAt: string;  // ISO string
-}
-
-export interface Task {
-    id: string;
-    projectId: string | null;   // null = Inbox (미분류)
-    title: string;
-    status: TaskStatus;
-    priority: Priority;
-    dueDate: string | null;     // 'YYYY-MM-DD' format
-    tags: string[];
-    memo: string;               // 자유 메모 (옵션)
-    createdAt: string;          // ISO string
-    updatedAt: string;          // ISO string
-}
-
-// 뷰 필터 타입
-export type ViewFilter =
-    | { type: 'all' }
-    | { type: 'project'; projectId: string }
-    | { type: 'today' }
-    | { type: 'urgent' };       // P1 필터
-
-// 앱 전역 상태
-export interface AppState {
-    projects: Project[];
-    tasks: Task[];
-    activeFilter: ViewFilter;
-    showDoneTasks: boolean;
+    created_at: string;
 }

@@ -1,34 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
-import { Header } from './Header';
-import { TaskForm } from '../task/TaskForm';
 
 export function AppLayout() {
-    const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
-
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            // Cmd/Ctrl + N
-            if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
-                e.preventDefault();
-                setIsTaskFormOpen(true);
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
-
     return (
-        <div className="flex h-screen bg-bg-base text-text-primary overflow-hidden font-sans">
-            <Sidebar className="w-[220px] shrink-0 border-r border-border" />
-            <main className="flex-1 flex flex-col overflow-hidden">
-                <Header onNewTask={() => setIsTaskFormOpen(true)} />
-                <div className="flex-1 overflow-y-auto p-6">
-                    <Outlet />
-                </div>
+        <div className="flex h-screen w-full bg-white overflow-hidden text-slate-800 antialiased">
+            {/* Global Navigation Bar (Very left thin bar in Monday) */}
+            <div className="w-[50px] shrink-0 bg-slate-900 flex flex-col items-center py-4 gap-4 z-10">
+                <div className="w-8 h-8 bg-blue-500 rounded blur-[1px]"></div> {/* Logo */}
+                <div className="w-8 h-8 border border-slate-700 rounded-full mt-auto"></div> {/* Profile */}
+            </div>
+
+            <Sidebar />
+
+            <main className="flex-1 flex flex-col min-w-0 bg-white">
+                <Outlet />
             </main>
-            <TaskForm isOpen={isTaskFormOpen} onClose={() => setIsTaskFormOpen(false)} />
         </div>
     );
 }
